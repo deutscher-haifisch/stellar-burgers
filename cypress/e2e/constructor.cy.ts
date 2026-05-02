@@ -1,3 +1,5 @@
+/// <reference types="cypress" />
+
 describe('burger constructor', () => {
   beforeEach(() => {
     cy.intercept('GET', '**/api/ingredients', {
@@ -19,25 +21,29 @@ describe('burger constructor', () => {
       .contains('Добавить')
       .click();
 
-    cy.contains('Краторная булка N-200i (верх)').should('exist');
-    cy.contains('Краторная булка N-200i (низ)').should('exist');
-    cy.contains('Биокотлета из марсианской Магнолии').should('exist');
+    cy.get('[data-cy=burger-constructor]').within(() => {
+      cy.contains('Краторная булка N-200i (верх)').should('exist');
+      cy.contains('Краторная булка N-200i (низ)').should('exist');
+      cy.contains('Биокотлета из марсианской Магнолии').should('exist');
+    });
   });
 
-    it('открывает и закрывает модальное окно ингредиента', () => {
-        cy.contains('Краторная булка N-200i').click();
+  it('открывает и закрывает модальное окно ингредиента', () => {
+    cy.contains('Краторная булка N-200i').click();
 
-        cy.contains('Детали ингредиента').should('exist');
-        cy.contains('Краторная булка N-200i').should('exist');
-        cy.contains('420').should('exist');
-        cy.contains('80').should('exist');
-        cy.contains('24').should('exist');
-        cy.contains('53').should('exist');
-
-        cy.get('[data-cy=modal-close]').click();
-
-        cy.contains('Детали ингредиента').should('not.exist');
+    cy.get('[data-cy=modal]').within(() => {
+      cy.contains('Детали ингредиента').should('exist');
+      cy.contains('Краторная булка N-200i').should('exist');
+      cy.contains('420').should('exist');
+      cy.contains('80').should('exist');
+      cy.contains('24').should('exist');
+      cy.contains('53').should('exist');
     });
+
+    cy.get('[data-cy=modal-close]').click();
+
+    cy.get('[data-cy=modal]').should('not.exist');
+  });
 
   it('создаёт заказ и очищает конструктор', () => {
     window.localStorage.setItem('refreshToken', 'fake-refresh-token');
